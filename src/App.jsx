@@ -1,62 +1,86 @@
-import { useState } from 'react';
-import Option from './components/Option';
+import { useState } from "react";
+import Option from "./components/Option";
 
 function App() {
   const [candidates, setCandidates] = useState([]);
-  const [newCandidateName, setNewCandidateName] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [newCandidateName, setNewCandidateName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [voteHistory, setVoteHistory] = useState([]);
+  const [nextId, setNextId] = useState(1); // Contador de IDs autoincrementável
 
   const addCandidate = (e) => {
-    e.preventDefault(); // Prevenir o reload da página ao enviar o form
+    e.preventDefault();
     if (newCandidateName.trim()) {
-      setCandidates([...candidates, { name: newCandidateName, votes: 0 }]);
-      setNewCandidateName('');
+      setCandidates([
+        ...candidates,
+        { id: nextId, name: newCandidateName, votes: 0 },
+      ]);
+      setNewCandidateName("");
+      setNextId(nextId + 1); // Incrementa o próximo ID
     }
+
+    //exibe o id do candidato
+    console.log(nextId);
   };
 
-  const removeCandidate = (name) => {
-    setCandidates(candidates.filter(candidate => candidate.name !== name));
-    setVoteHistory(voteHistory.filter(entry => entry.name !== name));
+  const removeCandidate = (id) => {
+    setCandidates(candidates.filter((candidate) => candidate.id !== id));
+    setVoteHistory(voteHistory.filter((entry) => entry.id !== id));
   };
 
-  const incrementVote = (name) => {
+  const incrementVote = (id) => {
     setCandidates(
-      candidates.map(candidate =>
-        candidate.name === name ? { ...candidate, votes: candidate.votes + 1 } : candidate
+      candidates.map((candidate) =>
+        candidate.id === id
+          ? { ...candidate, votes: candidate.votes + 1 }
+          : candidate
       )
     );
-    setVoteHistory([...voteHistory, { action: 'increment', name, timestamp: new Date() }]);
+    const candidate = candidates.find((candidate) => candidate.id === id);
+    setVoteHistory([
+      ...voteHistory,
+      { action: "increment", id, name: candidate.name, timestamp: new Date() },
+    ]);
   };
 
-  const decrementVote = (name) => {
+  const decrementVote = (id) => {
     setCandidates(
-      candidates.map(candidate =>
-        candidate.name === name && candidate.votes > 0
+      candidates.map((candidate) =>
+        candidate.id === id && candidate.votes > 0
           ? { ...candidate, votes: candidate.votes - 1 }
           : candidate
       )
     );
-    setVoteHistory([...voteHistory, { action: 'decrement', name, timestamp: new Date() }]);
+    const candidate = candidates.find((candidate) => candidate.id === id);
+    setVoteHistory([
+      ...voteHistory,
+      { action: "decrement", id, name: candidate.name, timestamp: new Date() },
+    ]);
   };
 
-  const editCandidateName = (oldName, newName) => {
-    setCandidates(
-      candidates.map(candidate =>
-        candidate.name === oldName ? { ...candidate, name: newName } : candidate
-      )
-    );
+  const editCandidateName = (id, newName) => {
+    setCandidates((prevCandidates) => {
+      const updatedCandidates = prevCandidates.map((candidate) =>
+        candidate.id === id ? { ...candidate, name: newName } : candidate
+      );
+      console.log(`Candidate ID: ${id}, New Name: ${newName}`);
+      console.log("Updated Candidates:", updatedCandidates);
+      return updatedCandidates;
+    });
   };
 
-  const totalVotes = candidates.reduce((total, candidate) => total + candidate.votes, 0);
-  const filteredCandidates = candidates.filter(candidate =>
+  const totalVotes = candidates.reduce(
+    (total, candidate) => total + candidate.votes,
+    0
+  );
+  const filteredCandidates = candidates.filter((candidate) =>
     candidate.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div>
       <h1>Voting App</h1>
-      
+
       {/* Formulário para Adicionar Candidato */}
       <form onSubmit={addCandidate}>
         <input
@@ -80,14 +104,14 @@ function App() {
 
       {/* Lista de Candidatos */}
       <div>
-        {filteredCandidates.map((candidate, index) => (
+        {filteredCandidates.map((candidate) => (
           <Option
-            key={index}
+            key={candidate.id} // use o id como chave
             candidate={candidate}
-            incrementVote={() => incrementVote(candidate.name)}
-            decrementVote={() => decrementVote(candidate.name)}
-            removeCandidate={() => removeCandidate(candidate.name)}
-            editCandidateName={(newName) => editCandidateName(candidate.name, newName)}
+            incrementVote={() => incrementVote(candidate.id)} // use o id aqui
+            decrementVote={() => decrementVote(candidate.id)} // use o id aqui
+            removeCandidate={() => removeCandidate(candidate.id)} // use o id aqui
+            editCandidateName={editCandidateName} // passe a função diretamente
           />
         ))}
       </div>
@@ -99,7 +123,8 @@ function App() {
       <ul>
         {voteHistory.map((entry, index) => (
           <li key={index}>
-            {entry.action === 'increment' ? 'Increased' : 'Decreased'} vote for {entry.name} at {entry.timestamp.toLocaleString()}
+            {entry.action === "increment" ? "Increased" : "Decreased"} vote for{" "}
+            {entry.name} at {entry.timestamp.toLocaleString()}
           </li>
         ))}
       </ul>
