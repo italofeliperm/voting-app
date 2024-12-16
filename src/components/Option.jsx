@@ -11,31 +11,19 @@ function Option({
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(candidate.name);
 
-  // Efeito para atualizar newName quando o candidato é editado
   useEffect(() => {
     setNewName(candidate.name);
   }, [candidate.name]);
 
   const handleEdit = () => {
     if (newName.trim()) {
-      // Garantir que o novo nome não seja vazio
-      editCandidateName(candidate.id, newName); // Mude aqui
+      editCandidateName(candidate.id, newName);
       setIsEditing(false);
     }
-
-    console.log(candidate.name);
-    console.log(newName);
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        padding: "10px",
-        margin: "10px 0",
-        textAlign: "center",
-      }}
-    >
+    <div className="candidate-card">
       {isEditing ? (
         <div>
           <input
@@ -45,18 +33,45 @@ function Option({
             placeholder="New Candidate Name"
             required
           />
-
-          <button onClick={handleEdit}>Save</button>
-          <button onClick={() => setIsEditing(false)}>Cancel</button>
+          <div className="button-group">
+            <button onClick={handleEdit}>Save</button>
+            <button className="secondary" onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
+          </div>
         </div>
       ) : (
         <>
           <h2>{candidate.name}</h2>
-          <p>Votes: {candidate.votes}</p>
-          <button onClick={incrementVote}>+</button>
-          <button onClick={decrementVote}>-</button>
-          <button onClick={removeCandidate}>Remove</button>
-          <button onClick={() => setIsEditing(true)}>Edit Name</button>
+          <p className="votes">Votes: {candidate.votes}</p>
+          <div className="button-group">
+            <button 
+              onClick={incrementVote}
+              style={{ gridColumn: "1 / 2" }}
+            >
+              +
+            </button>
+            <button 
+              onClick={decrementVote}
+              style={{ gridColumn: "2 / 3" }}
+            >
+              -
+            </button>
+            <button 
+              className="secondary" 
+              onClick={() => setIsEditing(true)}
+              style={{ gridColumn: "1 / 2" }}
+            >
+              Edit
+            </button>
+            <button 
+              className="secondary" 
+              onClick={removeCandidate}
+              style={{ gridColumn: "2 / 3" }}
+            >
+              Remove
+            </button>
+          </div>
         </>
       )}
     </div>

@@ -78,57 +78,62 @@ function App() {
   );
 
   return (
-    <div>
-      <h1>Voting App</h1>
-
-      {/* Formulário para Adicionar Candidato */}
-      <form onSubmit={addCandidate}>
-        <input
-          type="text"
-          value={newCandidateName}
-          onChange={(e) => setNewCandidateName(e.target.value)}
-          placeholder="Add Candidate Name"
-          required
-        />
-        <button type="submit">Add Candidate</button>
-      </form>
-
-      {/* Campo de Pesquisa */}
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search Candidate"
-        aria-label="Search Candidate"
-      />
-
-      {/* Lista de Candidatos */}
-      <div>
-        {filteredCandidates.map((candidate) => (
-          <Option
-            key={candidate.id} // use o id como chave
-            candidate={candidate}
-            incrementVote={() => incrementVote(candidate.id)} // use o id aqui
-            decrementVote={() => decrementVote(candidate.id)} // use o id aqui
-            removeCandidate={() => removeCandidate(candidate.id)} // use o id aqui
-            editCandidateName={editCandidateName} // passe a função diretamente
+    <>
+      <header className="header">
+        <h1>Voting App</h1>
+      </header>
+      
+      <div className="container">
+        <div className="form-container">
+          <form onSubmit={addCandidate}>
+            <input
+              type="text"
+              value={newCandidateName}
+              onChange={(e) => setNewCandidateName(e.target.value)}
+              placeholder="Add Candidate Name"
+              required
+            />
+            <button type="submit">Add</button>
+          </form>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Candidate"
+            aria-label="Search Candidate"
+            className="search-input"
           />
-        ))}
+        </div>
+
+        <div className="candidates-grid">
+          {filteredCandidates.map((candidate) => (
+            <Option
+              key={candidate.id}
+              candidate={candidate}
+              incrementVote={() => incrementVote(candidate.id)}
+              decrementVote={() => decrementVote(candidate.id)}
+              removeCandidate={() => removeCandidate(candidate.id)}
+              editCandidateName={editCandidateName}
+            />
+          ))}
+        </div>
+
+        <div className="vote-history">
+          <h2>Total votes: {totalVotes}</h2>
+          <h2>Votes History</h2>
+          <ul>
+            {voteHistory.map((entry, index) => (
+              <li key={index}>
+                <strong>{entry.name}</strong>:{" "}
+                {entry.action === "increment" ? "+" : "-"}1 vote
+                <br />
+                <small>{entry.timestamp.toLocaleString()}</small>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-      <h2>Total votes: {totalVotes}</h2>
-
-      {/* Histórico de Votos */}
-      <h2>Votes History</h2>
-      <ul>
-        {voteHistory.map((entry, index) => (
-          <li key={index}>
-            {entry.action === "increment" ? "Increased" : "Decreased"} vote for{" "}
-            {entry.name} at {entry.timestamp.toLocaleString()}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </>
   );
 }
 

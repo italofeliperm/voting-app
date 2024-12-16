@@ -1,87 +1,433 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --background: #0f172a;
+  --card-background: #1e293b;
+  --primary-color: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --success: #10b981;
+  --danger: #ef4444;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
+/* Reset e configurações base */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Previne scroll duplo */
 }
 
 body {
-  margin: 0;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+}
+
+#root {
+  height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Header fixo */
+.header {
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+  background-color: var(--background);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 }
 
-h2 {
-  font-size: 1.5em;
-  margin-top: 1em;
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--primary-color), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+/* Container principal */
+.container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 5rem auto 0;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  height: calc(100vh - 5rem);
+  display: grid;
+  gap: 1.5rem;
+  grid-template-areas:
+    "form history"
+    "candidates candidates";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+/* Form container ajustado */
+.form-container {
+  grid-area: form;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: auto;
+}
+
+.form-container form {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.search-container {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.vote-history {
+  grid-area: history;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: auto;
+  min-height: 200px;
+}
+
+/* Grid de candidatos com scroll próprio */
+.candidates-grid {
+  grid-area: candidates;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+  align-items: start;
+  justify-items: stretch;
+  grid-auto-rows: min-content;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 20rem);
+  box-sizing: border-box;
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: var(--primary-color) var(--card-background); /* Para Firefox */
+}
+
+/* Ajuste da scrollbar do grid de candidatos */
+.candidates-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.candidates-grid::-webkit-scrollbar-track {
+  background: var(--card-background);
+  margin: 1.5rem 0; /* Adiciona margem para não tocar as bordas */
+}
+
+.candidates-grid::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+  border: 2px solid var(--card-background); /* Cria uma borda ao redor do thumb */
+}
+
+/* Estilos comuns para containers */
+.form-container,
+.search-container,
+.vote-history {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 200px; /* Altura fixa para todos os containers */
+  box-sizing: border-box;
+  overflow-y: auto; /* Adiciona scroll quando necessário */
+}
+
+/* Ajuste específico para o vote-history */
+.vote-history {
+  display: flex;
+  flex-direction: column;
+}
+
+.vote-history ul {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 1rem;
+  padding-right: 0.5rem; /* Espaço para a scrollbar */
+}
+
+/* Estilização da scrollbar para os containers */
+.form-container::-webkit-scrollbar,
+.search-container::-webkit-scrollbar,
+.vote-history::-webkit-scrollbar,
+.vote-history ul::-webkit-scrollbar {
+  width: 4px;
+}
+
+.form-container::-webkit-scrollbar-track,
+.search-container::-webkit-scrollbar-track,
+.vote-history::-webkit-scrollbar-track,
+.vote-history ul::-webkit-scrollbar-track {
+  background: var(--card-background);
+}
+
+.form-container::-webkit-scrollbar-thumb,
+.search-container::-webkit-scrollbar-thumb,
+.vote-history::-webkit-scrollbar-thumb,
+.vote-history ul::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+  .container {
+    margin-top: 4rem;
+    grid-template-areas:
+      "form"
+      "history"
+      "candidates";
+    grid-template-columns: 1fr;
+    height: calc(100vh - 4rem);
+  }
+
+  .form-container,
+  .search-container,
+  .vote-history {
+    width: 100%;
+  }
+
+  .candidates-grid {
+    padding: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 700px) {
+  .header {
+    top: 0.5rem;
+  }
+
+  .container {
+    padding-top: 3.5rem;
+  }
+}
+
+/* Estilização do candidate card */
+.candidate-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 160px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.candidate-card h2 {
+  margin: 0;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.votes {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.button-group button {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  height: 32px;
+}
+
+.vote-history h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+}
+
+.vote-history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.vote-history li {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.vote-history li:last-child {
+  border-bottom: none;
+}
+
+/* Estilização base dos inputs */
+input[type="text"] {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
 }
 
 button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 5px;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
 button:hover {
-  border-color: #646cff;
+  background-color: var(--primary-hover);
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.form-container form {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  align-items: flex-start;
 }
 
-input[type="text"] {
-  padding: 0.5em;
-  margin: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+.form-container input[type="text"] {
+  margin-bottom: 0;
+  flex: 1;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.form-container button {
+  align-self: stretch;
+  min-width: auto;
+  white-space: nowrap;
+  padding: 0.75rem 1rem;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+  .form-container form {
+    flex-direction: column;
   }
 
-  a:hover {
-    color: #747bff;
+  .form-container button {
+    width: 100%;
+  }
+}
+
+/* Ajustes para desktop */
+@media (min-width: 769px) {
+  .container {
+    grid-template-areas:
+      "form history search"
+      "candidates candidates candidates";
   }
 
-  button {
-    background-color: #f9f9f9;
+  .form-container {
+    grid-area: form;
   }
+
+  .vote-history {
+    grid-area: history;
+  }
+
+  .search-container {
+    grid-area: search;
+  }
+
+  .candidates-grid {
+    grid-area: candidates;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Ajuste do input de busca */
+.search-input {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+/* Placeholder styling */
+input[type="text"]::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+  font-size: 1.125rem;
+}
+
+/* Ajustes para desktop */
+@media (min-width: 769px) {
+  .form-container form input[type="text"],
+  .search-input {
+    height: 48px;
+  }
+
+  .form-container button {
+    height: 48px;
+  }
+}
+
+/* Ajuste para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .candidates-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1.5rem;
+  }
+}
+
+/* Ajuste do botão Add */
+.form-container button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0 2rem;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 80px;
+}
+
+/* Remover estilos anteriores conflitantes */
+.form-container,
+.search-container {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: auto;
+  overflow: visible;
 }
